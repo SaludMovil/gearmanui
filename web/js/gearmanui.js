@@ -21,8 +21,22 @@ var gearmanui = angular.module('gearmanui', ['ngResource'])
 
     // Service : Gearman log callback
     .factory('GearmanLog', function($resource) {
+        function getQueryParams(qs) {
+            qs = qs.split("+").join(" ");
+
+            var params = {}, tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                params[decodeURIComponent(tokens[1])]
+                    = decodeURIComponent(tokens[2]);
+            }
+
+            return params;
+        }
+        var route = getQueryParams(window.location.hash);
         return $resource('data?worker=:worker', {
-            worker: 'appointment.appointment_notification'
+            worker: route['#/log?worker']
         });
     })
 
