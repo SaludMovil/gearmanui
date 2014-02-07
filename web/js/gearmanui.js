@@ -21,23 +21,31 @@ var gearmanui = angular.module('gearmanui', ['ngResource'])
 
     // Service : Gearman log callback
     .factory('GearmanLog', function($resource) {
-        function getQueryParams(qs) {
-            qs = qs.split("+").join(" ");
+        var wrapper = {};
+        wrapper.query = function(func) {
 
-            var params = {}, tokens,
-                re = /[?&]?([^=]+)=([^&]*)/g;
+            function getQueryParams(qs) {
+                qs = qs.split("+").join(" ");
 
-            while (tokens = re.exec(qs)) {
-                params[decodeURIComponent(tokens[1])]
-                    = decodeURIComponent(tokens[2]);
+                var params = {}, tokens,
+                    re = /[?&]?([^=]+)=([^&]*)/g;
+
+                while (tokens = re.exec(qs)) {
+                    params[decodeURIComponent(tokens[1])]
+                        = decodeURIComponent(tokens[2]);
+                }
+
+                return params;
             }
 
-            return params;
-        }
-        var route = getQueryParams(window.location.hash);
-        return $resource('data?worker=:worker', {
-            worker: route['#/log?worker']
-        });
+            var route = getQueryParams(window.location.hash);
+
+            $resource('data?worker=:worker', {
+                worker: route['#/log?worker']
+            }).query(func);
+        };
+
+        return wrapper;
     })
 
     // Service : Handle server errors
