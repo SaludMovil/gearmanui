@@ -18,7 +18,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="item in status | filter:search | orderBy:predicate:reverse">
-                <td>{{ "{{ item.function }}" }}</td>
+                <td>{{ "{{ item.function }}" }} <a href='#/log?worker={{ "{{ item.function }}" }}'>[log]</a></td>
                 <td>{{ "{{ item.server }}" }}</td>
                 <td>{{ "{{ item.queued }}" }}</td>
                 <td>{{ "{{ item.running }}" }}</td>

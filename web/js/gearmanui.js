@@ -10,12 +10,20 @@ var gearmanui = angular.module('gearmanui', ['ngResource'])
             .when('/status', {templateUrl:'status'})
             .when('/workers', {templateUrl:'workers'})
             .when('/servers', {templateUrl:'servers'})
+            .when('/log', {templateUrl:'log'})
             .otherwise({redirectTo:'/status'})
     }])
 
     // Service : Gearman info callback
     .factory('GearmanInfo', function($resource) {
         return $resource('info', {});
+    })
+
+    // Service : Gearman log callback
+    .factory('GearmanLog', function($resource) {
+        return $resource('data?worker=:worker', {
+            worker: 'appointment.appointment_notification'
+        });
     })
 
     // Service : Handle server errors
@@ -37,6 +45,16 @@ var gearmanui = angular.module('gearmanui', ['ngResource'])
         };
 
         return wrapper;
+    })
+
+    .factory('GearmanLogHandler', function() {
+
+        var wrapper = {};
+        wrapper.log = function(arg) {
+
+        }
+        return wrapper;
+
     })
 
     // Service : Transfort server incomming data info model tables.
@@ -130,7 +148,7 @@ var gearmanui = angular.module('gearmanui', ['ngResource'])
  * Controllers
  *
  */
-function InfoCtrl($scope, GearmanSettings, GearmanInfo, GearmanInfoHandler, GearmanErrorHandler) {
+function InfoCtrl($scope, GearmanSettings, GearmanInfo, GearmanLog, GearmanLogHandler, GearmanInfoHandler, GearmanErrorHandler) {
 
     /*
      * TODO Handle communication errors.
@@ -142,6 +160,15 @@ function InfoCtrl($scope, GearmanSettings, GearmanInfo, GearmanInfoHandler, Gear
             $scope.status = GearmanInfoHandler.status(data);
             $scope.workers = GearmanInfoHandler.workers(data);
             $scope.servers = GearmanInfoHandler.servers(data);
+        });
+
+        GearmanLog.query(function(data){
+            $scope.log = GearmanLogHandler.log(data);
+            var log = document.getElementById('log-textarea');
+            if (log) {
+                log.textContent = data[0]['data'];
+            }
+
         });
     }
 
