@@ -39,6 +39,9 @@ var gearmanui = angular.module('gearmanui', ['ngResource'])
             }
 
             var route = getQueryParams(window.location.hash);
+            if (!route['#/log?worker']) {
+                route = {'#/log?worker':''}
+            }
 
             $resource('data?worker=:worker', {
                 worker: route['#/log?worker']
