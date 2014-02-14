@@ -71,7 +71,7 @@ class ControllerProvider implements ServiceProviderInterface {
         while(!feof($fp))
         {
             $line = fgets($fp, 4096);
-            array_unshift($lines, $line);
+            array_push($lines, $line);
             if (count($lines) > $LINES)
                 array_shift($lines);
         }
